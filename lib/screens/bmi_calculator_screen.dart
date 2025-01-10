@@ -7,6 +7,7 @@ class BMICalculatorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Membuat controller untuk input berat dan tinggi badan
     final TextEditingController weightController = TextEditingController();
     final TextEditingController heightController = TextEditingController();
 
@@ -29,8 +30,11 @@ class BMICalculatorScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                // Ambil nilai input dari user
                 final weight = double.tryParse(weightController.text);
                 final height = double.tryParse(heightController.text);
+
+                // Validasi input
                 if (weight == null || height == null || height <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -40,6 +44,7 @@ class BMICalculatorScreen extends StatelessWidget {
                   return;
                 }
 
+                // Hitung BMI
                 final bmi = weight / ((height / 100) * (height / 100));
                 String status = '';
                 if (bmi < 18.5) {
@@ -52,9 +57,11 @@ class BMICalculatorScreen extends StatelessWidget {
                   status = 'Obesitas';
                 }
 
+                // Tambahkan ke riwayat BMI menggunakan Provider
                 Provider.of<BMIProvider>(context, listen: false)
                     .addBMIHistory(bmi, status);
 
+                // Tampilkan dialog hasil BMI
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -64,7 +71,12 @@ class BMICalculatorScreen extends StatelessWidget {
                     ),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          // Tutup dialog dan kosongkan input
+                          weightController.clear();
+                          heightController.clear();
+                          Navigator.pop(context); // Kembali ke layar kalkulator
+                        },
                         child: const Text('OK'),
                       ),
                     ],
